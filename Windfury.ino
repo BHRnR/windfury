@@ -2,12 +2,11 @@ const int buttonPin = 2;
 const int redLedPin = 10;
 const int blueLedPin = 5;
 
-int pseudoRandomNumber = 0;
 int buttonState = 0;
 int lastButtonState = 0;
 int brightness = 0;
 
-int proccEveryXPress = 1;
+int procEveryXPress = 5;
 int wavyDuration = 7;
 int blinkTimes = 3;
 
@@ -42,8 +41,8 @@ void dimmBrighter () {
   brightness++;
 }
 
-bool proccChecker() {
-  return pseudoRandomNumber % proccEveryXPress == 0;
+void procChecker () {
+  return random(procEveryXPress) == 0;
 }
 
 void blinkRed() {
@@ -70,11 +69,10 @@ void blinkRed() {
 void loop() {
   waitingState();
   buttonState = digitalRead(buttonPin);
-  if (buttonState != lastButtonState && buttonState == HIGH && proccChecker()) {
+  if (buttonState != lastButtonState && buttonState == HIGH && procChecker) {
     analogWrite(blueLedPin, 0);
     blinkRed();
     delay(50);
   }
   lastButtonState = buttonState;
-  pseudoRandomNumber++;
 }
