@@ -4,9 +4,10 @@ const int blueLedPin = 5;
 
 int buttonState = 0;
 int lastButtonState = 0;
-int brightness = 0;
+int currentBrightness = 0;
+int targetBrightness = 0;
 
-int procEveryXPress = 5;
+int procEveryXPress = 3;
 int wavyDuration = 7;
 int blinkTimes = 3;
 
@@ -19,49 +20,49 @@ void setup() {
 
 void waitingState() {
   analogWrite(redLedPin, 0);
-  analogWrite(blueLedPin, 255);
-  if (brightness < 20) {
-    while (brightness < 255) {
+  targetBrightness = random(256);
+  while (currentBrightness != targetBrightness) {
+    if (currentBrightness < targetBrightness) {
       dimmBrighter();
+    } else {
+      dimmDarker();
     }
-  } else {
-    dimmDarker();
   }
 }
 
-void dimmDarker () {
-  analogWrite(blueLedPin, brightness);
+void dimmDarker() {
+  analogWrite(blueLedPin, currentBrightness);
   delay(wavyDuration);
-  brightness--;
+  currentBrightness--;
 }
 
-void dimmBrighter () {
-  analogWrite(blueLedPin, brightness);
+void dimmBrighter() {
+  analogWrite(blueLedPin, currentBrightness);
   delay(wavyDuration);
-  brightness++;
+  currentBrightness++;
 }
 
-void procChecker () {
+bool procChecker() {
   return random(procEveryXPress) == 0;
 }
 
 void blinkRed() {
-  brightness = 0;
+  currentBrightness = 0;
   for (int i = 0; i < blinkTimes; i++) {
-    while (brightness > 0) {
-      analogWrite(redLedPin, brightness);
-      brightness--;
+    while (currentBrightness > 0) {
+      analogWrite(redLedPin, currentBrightness);
+      currentBrightness--;
       delay(1);
     }
-    while (brightness < 255) {
-      analogWrite(redLedPin, brightness);
-      brightness++;
+    while (currentBrightness < 255) {
+      analogWrite(redLedPin, currentBrightness);
+      currentBrightness++;
       delay(1);
     }
   }
-  while (brightness > 0) {
-    analogWrite(redLedPin, brightness);
-    brightness--;
+  while (currentBrightness > 0) {
+    analogWrite(redLedPin, currentBrightness);
+    currentBrightness--;
     delay(5);
   }
 }
@@ -69,7 +70,7 @@ void blinkRed() {
 void loop() {
   waitingState();
   buttonState = digitalRead(buttonPin);
-  if (buttonState != lastButtonState && buttonState == HIGH && procChecker) {
+  if (buttonState != lastButtonState && buttonState == HIGH && procChecker()) {
     analogWrite(blueLedPin, 0);
     blinkRed();
     delay(50);
