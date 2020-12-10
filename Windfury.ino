@@ -7,7 +7,7 @@ int lastButtonState = 0;
 int currentBrightness = 0;
 int targetBrightness = 0;
 
-int procEveryXPress = 3;
+int procEveryXPress = 2;
 int wavyDuration = 7;
 int blinkTimes = 3;
 
